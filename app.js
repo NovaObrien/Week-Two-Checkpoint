@@ -1,4 +1,3 @@
-let adoptedKids = 0
 let hayAuto = 0
 
 
@@ -31,17 +30,19 @@ let playerTotals = {
     type: '$',
     value: 0
   },
-  haySown: {
-    total: 0,
-    harvestTime: 0
+  children: {
+    type: 'Adopted Children',
+    value: 0
   }
 
 }
 
 function draw() {
   let template = ""
+  let playerStats = ""
   let infoElem = document.getElementById("infoPanel")
   let mainElem = document.getElementById("main")
+  let playerElem = document.getElementById("playerStats")
 
   for (const key in farmables) {
     if (farmables.hasOwnProperty(key)) {
@@ -55,46 +56,67 @@ function draw() {
     }
   }
 
+  for (const key in playerTotals) {
+    if (playerTotals.hasOwnProperty(key)) {
+      const playerInfo = playerTotals[key];
+
+      playerStats += /*html */`
+      <div class="col-12">
+      <h5>${playerInfo.type}</h5>
+      <h5>${playerInfo.value}</h5>
+      </div>`
+    }
+  }
+
   infoElem.innerHTML = template
+  playerElem.innerHTML = playerStats
   mainElem.innerHTML = /*html*/`
   <img src="Images/pixil-frame-0.png" class="btn btn-lg" onclick="Playerclick()"/>
 
-  <button class="btn btn-lg btn-info" onclick=autoPlant()>Helping Hands</button>
+  <button class="btn btn-lg btn-info" onclick=autoUpgrade()>Helping Hands</button>
   <button class="btn btn-lg btn-info" onclick=()>Purchase Tractor</button>
 
-  <button class="btn btn-lg btn-info" onclick=clickerUpgrade()>Adopt</button>`
+  <button class="btn btn-lg btn-info" onclick=clickerUpgrade()>Adopt</button>
+  <button class="btn btn-lg btn-info" onclick=sell()>Sell Hay</button>`
 
 }
 
 function clickerUpgrade() {
-  adoptedKids += 1
+  playerTotals.children.value += 1
   draw()
 }
 
 function Playerclick() {
   // console.log('Hello')
-  farmables.hay.value += adoptedKids + 1
+  farmables.hay.value += playerTotals.children.value + 1
 
   draw()
 }
 
 function autoUpgrade() {
   hayAuto += 1
+
+}
+
+function autoAmounts() {
+
   draw()
+  console.log(farmables.hay.value += hayAuto)
 }
 
 
 
 function autoPlant() {
   let time = 1.25
-  let intervalID = setInterval(autoAmounts, 1000 * time)
+  setInterval(autoAmounts, 1000 * time)
 
-  let clearIntervalHandler = function () {
-    clearInterval(intervalID)
-  }
 
-  setTimeout(clearIntervalHandler, 5000)
+
+  // let clearIntervalHandler = function () {
+  //   clearInterval(intervalID)
+  // }
+
+  // setTimeout(clearIntervalHandler, 5000)
 }
-// autoPlant()
 draw()
 autoPlant()
