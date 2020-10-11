@@ -2,11 +2,12 @@ let farmables = {
   hay: {
     name: "Hay!",
     valueString: 'Market Value: $',
-    value: 10,
+    value: 10.00,
     plantedTotalString: 'Planted: ',
     plantedTotal: 0,
     costString: 'Cost: $',
-    cost: 2
+    cost: 2,
+    costWithChildren: 2
 
 
     // season: "green"
@@ -71,6 +72,11 @@ let playerTotals = {
   }
 }
 
+let fertalizer = {
+  multiplier: 3,
+  cost: 200
+}
+
 
 function draw() {
   let template = ""
@@ -84,11 +90,11 @@ function draw() {
       const farmablesInfo = farmables[key];
 
       template += /*html */`
-      <div class="col-12 m-3">
-      <h6>${farmablesInfo.name}</h6>
-      <h6>${farmablesInfo.plantedTotalString} ${farmablesInfo.plantedTotal}</h6>
-      <h6>${farmablesInfo.valueString} ${farmablesInfo.value}</h6>
-      <h6>${farmablesInfo.costString} ${farmablesInfo.cost}</h6>
+      <div class="col col-4 shadow rounded m-3 pr-5">
+      <h5>${farmablesInfo.name}</h5>
+      <h5>${farmablesInfo.plantedTotalString} ${farmablesInfo.plantedTotal}</h5>
+      <h5>${farmablesInfo.valueString} ${farmablesInfo.value}</h5>
+      <h5>${farmablesInfo.costString} ${farmablesInfo.cost}</h5>
       </div>`
     }
   }
@@ -98,7 +104,7 @@ function draw() {
       const playerInfo = playerTotals[key];
 
       playerStats += /*html */`
-      <div class="col">
+      <div class="col shadow">
       <h5>${playerInfo.type} ${playerInfo.value}</h5>
       </div>`
     }
@@ -115,34 +121,63 @@ function draw() {
 <button class="btn btn-lg btn-info" onclick=tractorUpgrade()>Purchase Tractor $${playerTotals.tractor.cost}</button>
 
 <button class="btn btn-lg btn-info" onclick=clickerUpgrade()>Adopt $${playerTotals.children.cost}</button>
+<button class="btn btn-lg btn-info" onclick=fertalizeUpgrade()>Fertalize $${fertalizer.cost}</button>
 <button class="btn btn-lg btn-info" onclick=sell()>Sell Hay</button>
 </div>`
 
 }
 function Playerclick() {
-  playerTotals.money.value -= farmables.hay.cost
-  farmables.hay.plantedTotal += playerTotals.children.value + 1
+  if (playerTotals.money.value < farmables.hay.costWithChildren) {
+
+  } else {
+    playerTotals.money.value -= farmables.hay.costWithChildren
+    farmables.hay.plantedTotal += playerTotals.children.value + 1
+  }
   draw()
 }
 
 function clickerUpgrade() {
-  playerTotals.children.value += 1
-  playerTotals.money.value -= playerTotals.children.cost
-  playerTotals.children.cost *= playerTotals.children.multiplier
+  if (playerTotals.money.value < playerTotals.children.cost) {
+
+  } else {
+    playerTotals.children.value += 1
+    playerTotals.money.value -= playerTotals.children.cost
+    playerTotals.children.cost *= playerTotals.children.multiplier
+    farmables.hay.costWithChildren = playerTotals.children.value * farmables.hay.cost + 2
+  }
+  draw()
+}
+
+function fertalizeUpgrade() {
+  if (playerTotals.money.value < fertalizer.cost) {
+
+  } else {
+    farmables.hay.value *= fertalizer.multiplier
+    playerTotals.money.value -= fertalizer.cost
+    fertalizer.cost *= fertalizer.multiplier
+  }
   draw()
 }
 
 function tractorUpgrade() {
-  playerTotals.tractor.value += 1
-  playerTotals.money.value -= playerTotals.helpingHands.cost
-  playerTotals.tractor.cost *= playerTotals.tractor.multiplier
+  if (playerTotals.money.value < playerTotals.tractor.cost) {
+
+  } else {
+    playerTotals.tractor.value += 1
+    playerTotals.money.value -= playerTotals.tractor.cost
+    playerTotals.tractor.cost *= playerTotals.tractor.multiplier
+  }
   draw()
 }
 
 function autoUpgrade() {
-  playerTotals.helpingHands.value += 1
-  playerTotals.money.value -= playerTotals.helpingHands.cost
-  playerTotals.helpingHands.cost *= playerTotals.helpingHands.multiplier
+  if (playerTotals.money.value < playerTotals.helpingHands.cost) {
+
+  } else {
+    playerTotals.helpingHands.value += 1
+    playerTotals.money.value -= playerTotals.helpingHands.cost
+    playerTotals.helpingHands.cost *= playerTotals.helpingHands.multiplier
+  }
   draw()
 }
 
